@@ -11,8 +11,8 @@ Function Remove-StringSpecialCharacters
 
       $String = $String -replace '-', '' `
                         -replace ' ', '' `
-                        -replace '/', '' `
-                        -replace '\*', '' `
+                        -replace '/', '/' `
+                        -replace '\*', '\*' `
                         -replace "'", "" 
    }
 
