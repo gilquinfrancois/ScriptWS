@@ -13,7 +13,7 @@ Function Remove-StringSpecialCharacters
                         -replace ' ', '' `
                         -replace '/', '/' `
                         -replace '\*', '\*' `
-                        -replace '\?', '°' `
+                        -replace '\?', '' `
                         -replace "'", "" 
    }
 

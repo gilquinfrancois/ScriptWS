@@ -25,14 +25,14 @@ $continue = 1
 
 foreach ($User in $ADUsersToCreate) {
     <#$Departement = $User.Departement | Out-File -Append 'C:\Users\louisfitdevoie\Documents\test.csv'#>
-    $Departement = $User.Departement
+    $Departement = $User.departement
 
     $DepartementSplit = $Departement.Split("/")
     If($DepartementSplit[1] -eq $null) {
-        if(Get-ADOrganizationalUnit -Filter {Name -eq $DepartementSplit[1]}) {
+        if(Get-ADOrganizationalUnit -Filter 'Name -like $DepartementSplit[0]') {
 
         } else {
-            $DepartementSplit[1] | Out-File -Append 'C:\Users\louisfitdevoie\Documents\test.csv'
+            $DepartementSplit[0] | Out-File -Append 'C:\Users\louisfitdevoie\Documents\test.csv'
         }
     } else {
         <#
