@@ -1,5 +1,5 @@
 ﻿<# Import the raw data from a csv file #>
-$ADUsers = Import-csv 'C:\Users\louisfitdevoie\Documents\Employés3.csv' -Encoding UTF8
+$ADUsers = Import-csv 'C:\Users\louisfitdevoie\Documents\Employés-lower-sansAccents.csv' -Encoding UTF8
 
 <##>
 <#$Empty = "" | Out-File 'C:\Users\louisfitdevoie\Documents\test.csv'#>
@@ -31,7 +31,7 @@ foreach ($User in $ADUsers) {
     $LastName = $User.Nom
     $Description = $User.Description
     $Departement = $User.Departement
-    $InternNumber = $User.NInterne
+    $InternNumber = $User.N\°Interne
     $Bureau = $User.Bureau
 
     ($FirstName + ' ' + $LastName + ' ' + $Description + ' ' + $Departement + ' ' + $InternNumber + ' ' + $Bureau).ToLower() -replace 'é','e' -replace 'è','e' -replace 'ê','e' | Out-File -Append 'C:\Users\louisfitdevoie\Documents\test.csv'
