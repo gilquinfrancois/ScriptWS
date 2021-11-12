@@ -13,6 +13,7 @@ Function Remove-StringSpecialCharacters
                         -replace ' ', '' `
                         -replace '/', '/' `
                         -replace '\*', '\*' `
+                        -replace '\?', '°' `
                         -replace "'", "" 
    }
 
@@ -23,8 +24,8 @@ Function Remove-StringSpecialCharacters
 
 
 <###   HERE WE LOWER EVERY CHARACTER IN THE ENTRY FILE AND WE TAKE OUT THE OUT-VALUES IN ANOTHER FILE   ###>
-Get-Content 'C:\Users\louisfitdevoie\Desktop\dossier\Employés.csv' | ForEach-Object {$_.ToLower() } | Out-File 'C:\Users\louisfitdevoie\Documents\Employés-lower.csv'
+Get-Content 'C:\Users\louisfitdevoie\Documents\Employés.csv' | ForEach-Object {$_.ToLower() } | Out-File 'C:\Users\louisfitdevoie\Documents\Employés-lower.csv'
 
 <###   HERE WE USE THE FUNCTION PREVIOUSLY DECLARED TO REPLACE THE SPECIAL CHARACTERS AND WE TAKE OUT THE OUT-VALUES IN ANOTHER FILE   ###>
-Get-Content 'C:\Users\louisfitdevoie\Desktop\dossier\Employés-lower.csv'| ForEach-Object { Remove-StringSpecialCharacters($_) } | Out-File 'C:\Users\louisfitdevoie\Desktop\dossier\Employés-lower-sansAccents.csv'
+Get-Content 'C:\Users\louisfitdevoie\Documents\Employés-lower.csv'| ForEach-Object { Remove-StringSpecialCharacters($_) } | Out-File 'C:\Users\louisfitdevoie\Documents\Employés-lower-sansAccents.csv'
 
