@@ -24,15 +24,20 @@ foreach ($User in $FileData) {
             } else {
                 $NewPath = -join('OU=',$OUNameSplited[1],',',$Path)
                 New-ADOrganizationalUnit -Name $OUNameSplited[0] -path $NewPath
+                $NewPath = -join('OU=',$OUNameSplited[0],',',$NewPath)
+                New-ADGroup -Name $OUNameSplited[0] -GroupScope DomainLocal -GroupCategory Security -Path $NewPath
                 Write-Host "L'UO",$OUNameSplited[0],"a ete creee au path $NewPath"
             }
 
         } else {
             #Sinon on crée les 2 UO
             New-ADOrganizationalUnit -Name $OUNameSplited[1] -path $Path
-            Write-Host "L'UO",$OUNameSplited[1],"a ete creee"
             $NewPath = -join('OU=',$OUNameSplited[1],',',$Path)
+            New-ADGroup -Name $OUNameSplited[1] -GroupScope DomainLocal -GroupCategory Security -Path $NewPath
+            Write-Host "L'UO",$OUNameSplited[1],"a ete creee"
+            $NewPath = -join('OU=',$OUNameSplited[0],',',$NewPath)
             New-ADOrganizationalUnit -Name $OUNameSplited[0] -path $NewPath
+            New-ADGroup -Name $OUNameSplited[1] -GroupScope DomainLocal -GroupCategory Security -Path $NewPath
             Write-Host "L'UO",$OUNameSplited[0],"a ete creee au path $NewPath"
         }
 
