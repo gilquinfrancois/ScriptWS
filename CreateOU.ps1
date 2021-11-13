@@ -1,52 +1,47 @@
-<#
-    Récup le nom des UO à créer
-        --> Lire le fichier formatté avec les employés OK
-        --> Récup les départements de chaque user  OK
-        --> A chaque fois :
-            --> Vérifier si il y a un "/"
-                --> Si oui
-                    --> Split au "/"
-                    --> Vérifier si la partie d'après le "/" existe
-                        --> Si oui --> break
-                        --> Si non --> créer
-                    --> Vérifier si la partie d'avant le "/" existe dans l'UO nommée comme après le "/"
-                        --> Si oui --> break
-                        --> Si non --> créer
-                --> Si non
-                    --> Vérifier si le nom de département existe
-                        --> Si oui --> break
-                        --> Si non --> créer
-#>
-$ADUsersToCreate = Import-csv 'C:\Users\louisfitdevoie\Documents\Employés-lower-sansAccents.csv' -Encoding UTF8
+Import-Module activedirectory
 
-$continue = 1
+$FileLocation = 'C:\Users\louisfitdevoie\Documents\Employes-lower-sansAccents.csv'
+$FileData = Import-CSV -Path $FileLocation -Delimiter ";" -Encoding UTF8
 
-<# Récupération des départements #>
+foreach ($User in $FileData) {
 
-foreach ($User in $ADUsersToCreate) {
-    <#$Departement = $User.Departement | Out-File -Append 'C:\Users\louisfitdevoie\Documents\test.csv'#>
-    $Departement = $User.departement
+    $OUName = $User.departement
+    $Path = 'DC=test,DC=lan'
 
-    $DepartementSplit = $Departement.Split("/")
-    If($DepartementSplit[1] -eq $null) {
-        if(Get-ADOrganizationalUnit -Filter 'Name -like $DepartementSplit[0]') {
+    #Verifie si le nom de departement contient un /
+    if($OUName.contains("/")) {
+        #split
+        $OUNameSplited = $OUName.Split("/") 
+        
+        #verifie si le nom de departement apres le / existe
+        $FilterOUName1 = -join("name -eq '",$OUNameSplited[1],"'")
+        $FilterOUName0 = -join("name -eq '",$OUNameSplited[0],"'")
+        if(Get-ADOrganizationalUnit -Filter "$FilterOUName1") {
+
+            #Si oui on verifie si le nom de departement avant le / existe dans l'uo
+            if(Get-ADOrganizationalUnit -Filter "$FilterOUName0") {
+
+            } else {
+                $NewPath = -join('OU=',$OUNameSplited[1],',',$Path)
+                New-ADOrganizationalUnit -Name $OUNameSplited[0] -path $NewPath
+                Write-Host "L'UO",$OUNameSplited[0],"a ete creee au path $NewPath"
+            }
 
         } else {
-            $DepartementSplit[0] | Out-File -Append 'C:\Users\louisfitdevoie\Documents\test.csv'
+            #Sinon on crée les 2 UO
+            New-ADOrganizationalUnit -Name $OUNameSplited[1] -path $Path
+            Write-Host "L'UO",$OUNameSplited[1],"a ete creee"
+            $NewPath = -join('OU=',$OUNameSplited[1],',',$Path)
+            New-ADOrganizationalUnit -Name $OUNameSplited[0] -path $NewPath
+            Write-Host "L'UO",$OUNameSplited[0],"a ete creee au path $NewPath"
         }
+
     } else {
-        <#
-        if(Get-ADOrganizationalUnit -Filter {Name -eq $DepartementSplit[1]}) {
-
+        if(Get-ADOrganizationalUnit -Filter "name -eq '$OUName'") {
+            
         } else {
-            $DepartementSplit[1] | Out-File -Append 'C:\Users\louisfitdevoie\Documents\test.csv'
+            New-ADOrganizationalUnit -Name $OUName -path $Path
+            Write-Host "L'UO $OUName a ete creee"
         }
-        if(Get-ADOrganizationalUnit -Filter {Name -eq $DepartementSplit[0]}) {
-
-        } else {
-            $DepartementSplit[0] | Out-File -Append 'C:\Users\louisfitdevoie\Documents\test.csv'
-        }#>
-        $test = $DepartementSplit[1] + '/' + $DepartementSplit[0] | Out-File -Append 'C:\Users\louisfitdevoie\Documents\test.csv'
     }
-
 }
