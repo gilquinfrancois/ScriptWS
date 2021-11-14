@@ -22,34 +22,54 @@ foreach ($User in $FileData) {
             if(Get-ADOrganizationalUnit -Filter "$FilterOUName0") {
 
             } else {
-                $NewPath = -join('OU=',$OUNameSplited[1],',',$Path)
-                New-ADOrganizationalUnit -Name $OUNameSplited[0] -path $NewPath
-                $NewPath = -join('OU=',$OUNameSplited[0],',',$NewPath)
-                New-ADGroup -Name $OUNameSplited[0] -GroupScope DomainLocal -GroupCategory Security -Path $NewPath
-                Write-Host "L'UO",$OUNameSplited[0],"a ete creee au path $NewPath"
+                try {
+                    $NewPath = -join('OU=',$OUNameSplited[1],',',$Path)
+                    New-ADOrganizationalUnit -Name $OUNameSplited[0] -path $NewPath
+                    $NewPath = -join('OU=',$OUNameSplited[0],',',$NewPath)
+                    New-ADGroup -Name $OUNameSplited[0] -GroupScope DomainLocal -GroupCategory Security -Path $NewPath
+                    Write-Host "L'UO",$OUNameSplited[0],"a ete creee au path $NewPath"
+                } catch {
+                    $Warning = -join("Erreur lors de la creation de l'UO ",$OUNameSplited[0])
+                    Write-Warning $Warning
+                }
             }
 
         } else {
             #Sinon on crée les 2 UO
             ##Creation de l'UO parent
-            New-ADOrganizationalUnit -Name $OUNameSplited[1] -path $Path
-            $NewPath = -join('OU=',$OUNameSplited[1],',',$Path)
-            New-ADGroup -Name $OUNameSplited[1] -GroupScope DomainLocal -GroupCategory Security -Path $NewPath
-            Write-Host "L'UO",$OUNameSplited[1],"a ete creee"
-
+            try {
+                New-ADOrganizationalUnit -Name $OUNameSplited[1] -path $Path
+                $NewPath = -join('OU=',$OUNameSplited[1],',',$Path)
+                New-ADGroup -Name $OUNameSplited[1] -GroupScope DomainLocal -GroupCategory Security -Path $NewPath
+                Write-Host "L'UO",$OUNameSplited[1],"a ete creee"
+            } catch {
+                $Warning = -join("Erreur lors de la creation de l'UO ",$OUNameSplited[1])
+                    Write-Warning $Warning
+            }
             ##Creation de l'UO enfant
-            $NewPath = -join('OU=',$OUNameSplited[0],',',$NewPath)
-            New-ADOrganizationalUnit -Name $OUNameSplited[0] -path $NewPath
-            New-ADGroup -Name $OUNameSplited[1] -GroupScope DomainLocal -GroupCategory Security -Path $NewPath
-            Write-Host "L'UO",$OUNameSplited[0],"a ete creee au path $NewPath"
+            try {
+                $NewPath = -join('OU=',$OUNameSplited[0],',',$NewPath)
+                New-ADOrganizationalUnit -Name $OUNameSplited[0] -path $NewPath
+                New-ADGroup -Name $OUNameSplited[1] -GroupScope DomainLocal -GroupCategory Security -Path $NewPath
+                Write-Host "L'UO",$OUNameSplited[0],"a ete creee au path $NewPath"
+            } catch {
+                $Warning = -join("Erreur lors de la creation de l'UO ",$OUNameSplited[0])
+                    Write-Warning $Warning
+            }
+            
         }
 
     } else {
         if(Get-ADOrganizationalUnit -Filter "name -eq '$OUName'") {
             
         } else {
-            New-ADOrganizationalUnit -Name $OUName -path $Path
-            Write-Host "L'UO $OUName a ete creee"
+            try {
+                New-ADOrganizationalUnit -Name $OUName -path $Path
+                Write-Host "L'UO $OUName a ete creee"
+            } catch {
+                $Warning = -join("Erreur lors de la creation de l'UO ",$OUName)
+                    Write-Warning $Warning
+            }
         }
     }
 }
