@@ -31,10 +31,13 @@ foreach ($User in $FileData) {
 
         } else {
             #Sinon on crée les 2 UO
+            ##Creation de l'UO parent
             New-ADOrganizationalUnit -Name $OUNameSplited[1] -path $Path
             $NewPath = -join('OU=',$OUNameSplited[1],',',$Path)
             New-ADGroup -Name $OUNameSplited[1] -GroupScope DomainLocal -GroupCategory Security -Path $NewPath
             Write-Host "L'UO",$OUNameSplited[1],"a ete creee"
+
+            ##Creation de l'UO enfant
             $NewPath = -join('OU=',$OUNameSplited[0],',',$NewPath)
             New-ADOrganizationalUnit -Name $OUNameSplited[0] -path $NewPath
             New-ADGroup -Name $OUNameSplited[1] -GroupScope DomainLocal -GroupCategory Security -Path $NewPath
